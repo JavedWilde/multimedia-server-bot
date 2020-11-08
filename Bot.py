@@ -20,6 +20,9 @@ ROLES_CHANNEL_ID = 774708133150588980
 RULES_CHANNEL_ID = 774619660037390339
 INTRO_CHANNEL_ID = 774619692550586369
 
+# user IDs
+DADDYS_ID = 389432819056771072
+
 
 @client.event
 async def on_member_join(member):
@@ -49,6 +52,14 @@ async def on_message(message):
                 output += ' '
             for x in range(0, 10):
                 await message.channel.send(output)
+
+    if message.content.startswith('beta isko gaali do'):
+        if message.author.id == DADDYS_ID:
+            x = random.randint(0, len(slur))
+            await message.channel.send(slur[x] + ' h ye banda')
+        else:
+            x = random.randint(0, len(slur))
+            await message.channel.send('ni dunga, kya kr lega ' + slur[x])
 
     # check server speed
     if message.content.startswith(prefix + 'ping'):
