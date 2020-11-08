@@ -75,18 +75,27 @@ async def on_message(message):
 
     # Gaali Galouj
     if message.content.startswith(prefix + 'provoke'):
-        mes = message.content.split()
-        if 1 < len(mes) < 3:
-            output = ''
-            for word in mes[1:2]:
-                output += word
-                output += ' '
-
+        # if me, fuck them
+        content = ''
+        content += message.content
+        content = content.lower()
+        if content.find('javed') > 0:
             x = random.randint(0, len(slur))
-            await message.channel.send(output + slur[x] + ' h')
-
+            await message.channel.send(message.author.mention + slur[x] + ' h')
+        # if not me, then ok
         else:
-            await message.channel.send("Please give just a single word name")
+            mes = message.content.split()
+            if 1 < len(mes) < 3:
+                output = ''
+                for word in mes[1:2]:
+                    output += word
+                    output += ' '
+
+                x = random.randint(0, len(slur))
+                await message.channel.send(output + slur[x] + ' h')
+
+            else:
+                await message.channel.send("Please give just a single word name")
 
 
 # list of available roles command
