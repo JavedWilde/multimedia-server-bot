@@ -24,6 +24,9 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    if message.author.id == 389432819056771072:
+        await message.channel.send('hi daddy')
+
     # check server speed
     if message.content.startswith(prefix + 'ping'):
         mes = await message.channel.send('meh')
