@@ -53,6 +53,7 @@ async def on_message(message):
             for x in range(0, 10):
                 await message.channel.send(output)
 
+    '''
     if message.content.startswith('beta isko gaali do'):
         if message.author.id == DADDYS_ID:
             x = random.randint(0, len(slur))
@@ -67,7 +68,7 @@ async def on_message(message):
         else:
             x = random.randint(0, len(slur))
             await message.channel.send('ni dunga, kya kr lega ' + slur[x])
-
+    '''
     # check server speed
     if message.content.startswith(prefix + 'ping'):
         mes = await message.channel.send('meh')
