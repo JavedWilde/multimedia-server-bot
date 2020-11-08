@@ -136,7 +136,7 @@ async def on_message(message):
 
             # if role typed in the message does not exist in the server or is a non public role
             if role is None or str(role) in [a for a in excludedRoles]:
-                if message.author.id == 389432819056771072 :
+                if message.author.id == 389432819056771072:
                     await message.channel.send('Yes Daddy :weary: Harder Please')
                 else:
                     await message.channel.send('Please type in the proper role name. **NOTE- Names are Case Sensitive**')
