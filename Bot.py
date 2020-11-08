@@ -30,10 +30,10 @@ async def on_message(message):
         pingDelay = mes.created_at - message.created_at
         pingDelay_DIGITSONLY = ''
         for x in str(pingDelay):
-            if x != ':' and x != '.':
+            if x != ':' and x != '.' and x != '0':
                 pingDelay_DIGITSONLY += x
-        print(pingDelay_DIGITSONLY)
-        await message.channel.send(pingDelay_DIGITSONLY[5] + pingDelay_DIGITSONLY[6] + pingDelay_DIGITSONLY[7] + 'ms')
+
+        await message.channel.send(pingDelay_DIGITSONLY + 'ms')
         await mes.delete()
 
     # help
