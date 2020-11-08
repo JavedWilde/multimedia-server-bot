@@ -1,5 +1,4 @@
 import discord
-
 import random
 
 TOKEN = 'Nzc0NjY1MTAzMzA3NDQwMTc5.X6bFGQ.yGZlmMkGnF2kVes4bTIXPEJi5-8'
@@ -87,7 +86,7 @@ async def on_message(message):
         else:
             await message.channel.send("Please give just a single word name")
 
-    # list of avaible roles command
+    # list of available roles command
     if message.content.startswith(prefix + 'roles'):
         strng = '**List of available Roles:**'
         for r in message.guild.roles:
@@ -137,8 +136,11 @@ async def on_message(message):
 
             # if role typed in the message does not exist in the server or is a non public role
             if role is None or str(role) in [a for a in excludedRoles]:
-                await message.channel.send('Please type in the proper role name. **NOTE- Names are Case Sensitive**')
-                await message.channel.send('Type **' + prefix + 'roles** to see available roles')
+                if message.author.id == 389432819056771072 :
+                    await message.channel.send('Yes Daddy :weary: Harder Please')
+                else:
+                    await message.channel.send('Please type in the proper role name. **NOTE- Names are Case Sensitive**')
+                    await message.channel.send('Type **' + prefix + 'roles** to see available roles')
             else:
                 await message.author.add_roles(role)
                 await message.channel.send('**' + str(role) + '** ' + 'Role has been added')
