@@ -1,8 +1,5 @@
 import discord
-# import asyncio
-# import time
 import random
-# import datetime
 
 TOKEN = 'Nzc0NjY1MTAzMzA3NDQwMTc5.X6bFGQ.yGZlmMkGnF2kVes4bTIXPEJi5-8'
 
