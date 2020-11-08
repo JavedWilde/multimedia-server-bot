@@ -22,6 +22,7 @@ INTRO_CHANNEL_ID = 774619692550586369
 @client.event
 async def on_member_join(member):
     channel = discord.utils.get(client.guild.channels, id=INTRO_CHANNEL_ID)
+    await channel.send('meh')
 
 
 @client.event
