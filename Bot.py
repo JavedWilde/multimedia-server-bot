@@ -14,6 +14,7 @@ slur = ['madherchod', 'randwa', 'randi', 'betichod', 'vinoth ki jhaant', 'raand 
 # roles that must be excluded from being Given by the bot
 excludedRoles = ['@everyone', 'bots', 'Groovy', 'Rythm', 'Admins', 'SulagtiGaand', 'Moderator']
 
+
 # important Channel IDs
 ROLES_CHANNEL_ID = 774708133150588980
 INTRO_CHANNEL_ID = 774619692550586369
