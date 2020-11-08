@@ -12,7 +12,7 @@ client = discord.Client()
 prefix = '.'
 # Gaali
 slur = ['madherchod', 'randwa', 'randi', 'betichod', 'vinoth ki jhaant', 'raand ki gand', 'chutiya', 'gandu', 'muthela',
-        'bhayrand']
+        'bhayrand','napunsak']
 # slur = ['sahil ka papa','sahil ki gaand leta','sahil se chooswata']
 # roles that must be excluded from being Given by the bot
 excludedRoles = ['@everyone', 'bots', 'Groovy', 'Rythm', 'Admins', 'SulagtiGaand', 'Moderator']
