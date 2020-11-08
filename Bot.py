@@ -82,8 +82,9 @@ async def on_message(message):
                 output += word
                 output += ' '
 
-            testing = output.lower()
             x = random.randint(0, len(slur))
+            testing = output.lower()
+
             if testing.find('javed'):
                 await message.channel.send(message.author.mention + ' ' + slur[x] + ' h')
 
