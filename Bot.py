@@ -91,8 +91,6 @@ async def on_message(message):
         else:
             await message.channel.send("Please give just a single word name")
 
-    if message.content.startswith('TagUser'):
-        await message.channel.send(message.author.mention)
 
 # list of available roles command
     if message.content.startswith(prefix + 'roles'):
