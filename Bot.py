@@ -87,7 +87,6 @@ async def on_message(message):
 
             if testing.find('javed'):
                 await message.channel.send(message.author.mention + ' ' + slur[x] + ' h')
-
             else:
                 await message.channel.send(output + slur[x] + ' h')
 
