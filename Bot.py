@@ -84,10 +84,12 @@ async def on_message(message):
 
             testing = output.lower()
             x = random.randint(0, len(slur))
-            if not testing.find('javed'):
-                await message.channel.send(output + slur[x] + ' h')
-            else:
+            if testing.find('javed'):
                 await message.channel.send(message.author.mention + ' ' + slur[x] + ' h')
+
+            else:
+                await message.channel.send(output + slur[x] + ' h')
+
         else:
             await message.channel.send("Please give just a single word name")
 
