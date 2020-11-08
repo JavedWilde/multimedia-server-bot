@@ -9,11 +9,19 @@ client = discord.Client()
 prefix = '.'
 # Gaali
 slur = ['madherchod', 'randwa', 'randi', 'betichod', 'vinoth ki jhaant', 'raand ki gand', 'chutiya', 'gandu', 'muthela',
-        'bhayrand','napunsak']
+        'bhayrand', 'napunsak']
 # slur = ['sahil ka papa','sahil ki gaand leta','sahil se chooswata']
 # roles that must be excluded from being Given by the bot
 excludedRoles = ['@everyone', 'bots', 'Groovy', 'Rythm', 'Admins', 'SulagtiGaand', 'Moderator']
+
+# important Channel IDs
 ROLES_CHANNEL_ID = 774708133150588980
+INTRO_CHANNEL_ID = 774619692550586369
+
+
+@client.event
+async def on_member_join(member):
+    channel = discord.utils.get(client.guild.channels, id=INTRO_CHANNEL_ID)
 
 
 @client.event
