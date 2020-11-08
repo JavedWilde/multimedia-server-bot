@@ -1,9 +1,11 @@
 import discord
+
 import random
 
 TOKEN = 'Nzc0NjY1MTAzMzA3NDQwMTc5.X6bFGQ.yGZlmMkGnF2kVes4bTIXPEJi5-8'
 
-client = discord.Client()
+intent = discord.Intents.all()
+client = discord.Client(intents=intent)
 
 # command Prefix
 prefix = '.'
@@ -14,22 +16,40 @@ slur = ['madherchod', 'randwa', 'randi', 'betichod', 'vinoth ki jhaant', 'raand 
 # roles that must be excluded from being Given by the bot
 excludedRoles = ['@everyone', 'bots', 'Groovy', 'Rythm', 'Admins', 'SulagtiGaand', 'Moderator']
 
-
 # important Channel IDs
 ROLES_CHANNEL_ID = 774708133150588980
+RULES_CHANNEL_ID = 774619660037390339
 INTRO_CHANNEL_ID = 774619692550586369
 
 
 @client.event
 async def on_member_join(member):
-    channel = discord.utils.get(client.guild.channels, id=INTRO_CHANNEL_ID)
-    await channel.send('meh')
+    channel = client.get_channel(id=INTRO_CHANNEL_ID)
+    myid = '<@' + str(member.id) + '>'
+    await channel.send(
+        'Hey ' + myid + ', welcome to ' + client.get_guild(774541979085438978).name +
+        ' Server! enjoy your stay in the server make sure to read the ' + client.get_channel(
+            id=RULES_CHANNEL_ID).mention + ' and assign '
+        + client.get_channel(id=ROLES_CHANNEL_ID).mention + ' to yourself')
+    # await client.send_message(channel, ' : %s is the best ' % myid)
+
+    # await channel.send('meh')
 
 
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
+
+    if message.content.startswith(prefix + 'spam') and 'Moderator' in [y.name for y in message.author.roles]:
+        mes = message.content.split()
+        if 1 < len(mes) < 3:
+            output = ''
+            for word in mes[1:2]:
+                output += word
+                output += ' '
+            for x in range(0, 10):
+                await message.channel.send(output)
 
     # check server speed
     if message.content.startswith(prefix + 'ping'):
@@ -131,7 +151,6 @@ async def on_message(message):
             number = ''
             for x in message.content[len(prefix) + 6:]:
                 number += x
-            print(number.isdigit())
 
             if number.isdigit():
                 if int(number) < 101:
