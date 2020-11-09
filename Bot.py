@@ -49,7 +49,7 @@ async def on_message(message):
     message_split = message.content.split()
 
     # endregion
-    if len(message_split > 1):
+    if len(message_split > 0):
         if message_split[0] == str(prefix + 'spam') and 'Moderator' in [y.name for y in message.author.roles]:
             mes = message.content.split()
             if 1 < len(mes) < 3:
