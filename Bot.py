@@ -221,8 +221,9 @@ async def on_message(message):
             elif 1 < len(message_split) < 3 and message_split[1].lower() == 'roles':
                 temp = ''
                 for x in excludedRoles:
-                    temp += x
-                    temp += '\n'
+                    if x != '@everyone':
+                        temp += x
+                        temp += '\n'
                 await message.channel.send('Excluded Roles: \n' + temp)
             else:
                 await message.channel.send('Wrong usage, use **' + prefix + 'rolemanager help** for usage guide')
