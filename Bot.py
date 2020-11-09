@@ -40,12 +40,17 @@ async def on_member_join(member):
 
 @client.event
 async def on_message(message):
+    # if message.channel.id == 774637140709081099:
+    # house Keeping
+    # region
     if message.author == client.user:
         return
 
     message_split = message.content.split()
 
-    if message_split[0] == prefix + 'spam' and 'Moderator' in [y.name for y in message.author.roles]:
+    # endregion
+
+    if message_split[0] == str(prefix + 'spam') and 'Moderator' in [y.name for y in message.author.roles]:
         mes = message.content.split()
         if 1 < len(mes) < 3:
             output = ''
@@ -72,7 +77,7 @@ async def on_message(message):
             await message.channel.send('ni dunga, kya kr lega ' + slur[x])
     '''
     # check server speed
-    if message_split[0] == prefix + 'ping':
+    if message_split[0] == str(prefix + 'ping'):
         mes = await message.channel.send('meh')
         pingDelay = mes.created_at - message.created_at
         pingDelay_DIGITSONLY = ''
@@ -84,7 +89,7 @@ async def on_message(message):
         await mes.delete()
 
     # help
-    if message_split[0] == prefix + 'help':
+    if message_split[0] == str(prefix + 'help'):
         strng = '**List of available commands:** \n'
         strng += '*' + prefix + 'provoke <name>* to provoke\n'
         strng += '*' + prefix + 'iam <role name>* to assign self roles (Case Sensitive)\n'
@@ -92,10 +97,11 @@ async def on_message(message):
         strng += '*' + prefix + 'roles* to see available roles\n\n'
         strng += '**Admin Commands:**\n'
         strng += '*' + prefix + 'clear <number of messages>* to delete messages (only accessed by a Mod)\n'
+        strng += '*' + prefix + 'rolemanager help* to manage roles assignable by the bot\n'
         await message.channel.send(strng)
 
     # Gaali Galouj
-    if message_split[0] == prefix + 'provoke':
+    if message_split[0] == str(prefix + 'provoke'):
         # if me, fuck them
         content = ''
         content += message.content
@@ -119,7 +125,7 @@ async def on_message(message):
                 await message.channel.send("Please give just a single word name")
 
     # list of available roles command
-    if message_split[0] == prefix + 'roles':
+    if message_split[0] == str(prefix + 'roles'):
         strng = '**List of available Roles:**'
         for r in message.guild.roles:
             roleOK = True  # same as role public but different name for the scope of this loop
@@ -133,7 +139,7 @@ async def on_message(message):
         await message.channel.send(strng)
 
     # role un assign command
-    if message_split[0] == prefix + 'iamnot':
+    if message_split[0] == str(prefix + 'iamnot'):
         if message.channel.id == ROLES_CHANNEL_ID or 'Moderator' in [y.name for y in message.author.roles]:
             mes = message.content.split()
             output = ''  # temp Rolename
@@ -153,7 +159,7 @@ async def on_message(message):
                 await message.channel.send('You dont have **' + roleName + '** role or it doesnt exist')
 
     # role assign command
-    elif message_split[0] == prefix + 'iam':
+    elif message_split[0] == str(prefix + 'iam'):
         if message.channel.id == ROLES_CHANNEL_ID or 'Moderator' in [y.name for y in message.author.roles]:
             mes = message.content.split()
             output = ''  # temp Rolename
@@ -179,6 +185,47 @@ async def on_message(message):
                 await message.channel.send('**' + str(role) + '** ' + 'Role has been added')
         else:
             await message.channel.send('Wrong Channel')
+
+    # role exclusion
+    if message_split[0] == str(prefix + 'rolemanager') and 'Moderator' in [y.name for y in message.author.roles]:
+        if 2 < len(message_split) < 4:
+            if message_split[1].lower() == 'exclude':
+                if message_split[2] in excludedRoles:
+                    await message.channel.send(message_split[2] + ' is already excluded')
+                elif message_split[2] in [y.name for y in message.guild.roles]:
+                    excludedRoles.append(message_split[2])
+                    await message.channel.send(message_split[2] + ' added to exclusions, it is not assignable by '
+                                                                  'command now')
+                else:
+                    await message.channel.send(message_split[2] + ' doesnt exist. Role names are Caps sensitive')
+            elif message_split[1].lower() == 'include':
+                if message_split[2] in excludedRoles:
+                    excludedRoles.remove(message_split[2])
+                    await message.channel.send(message_split[2] + 'removed from exclusions, role is now '
+                                                                  'assignable by command')
+                elif message_split[2] in [y.name for y in message.guild.roles]:
+                    await message.channel.send(message_split[2] + ' role is not in the exclusions')
+                else:
+                    await message.channel.send(message_split[2] + ' doesnt exist. Role names are Caps sensitive')
+            else:
+                await message.channel.send('Wrong usage, use **' + prefix + 'rolemanager help** for usage guide')
+        else:
+            if 1 < len(message_split) < 3 and message_split[1].lower() == 'help':
+                temp = 'Available Commands. **Rolenames are Caps sensitive**\n\n'
+                temp += '*' + prefix + 'rolemanager exclude <rolename>* to block a rolename from being assigned ' \
+                                       'by the bot\n'
+                temp += '*' + prefix + 'rolemanager exclude <rolename>* to allow a rolename to be assigned by ' \
+                                       'the bot\n'
+                temp += '*' + prefix + 'rolemanager roles* to show list of excluded roles\n'
+                await message.channel.send(temp)
+            elif 1 < len(message_split) < 3 and message_split[1].lower() == 'roles':
+                temp = ''
+                for x in excludedRoles:
+                    temp += x
+                    temp += '\n'
+                await message.channel.send('Excluded Roles: \n' + temp)
+            else:
+                await message.channel.send('Wrong usage, use **' + prefix + 'rolemanager help** for usage guide')
 
     # Clear Messages (For Admin)
     if message_split[0] == prefix + 'clear':
