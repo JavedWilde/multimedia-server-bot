@@ -43,7 +43,9 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith(prefix + 'spam') and 'Moderator' in [y.name for y in message.author.roles]:
+    message_split = message.content.split()
+
+    if message_split[0] == prefix + 'spam' and 'Moderator' in [y.name for y in message.author.roles]:
         mes = message.content.split()
         if 1 < len(mes) < 3:
             output = ''
@@ -70,7 +72,7 @@ async def on_message(message):
             await message.channel.send('ni dunga, kya kr lega ' + slur[x])
     '''
     # check server speed
-    if message.content.startswith(prefix + 'ping'):
+    if message_split[0] == prefix + 'ping':
         mes = await message.channel.send('meh')
         pingDelay = mes.created_at - message.created_at
         pingDelay_DIGITSONLY = ''
@@ -82,7 +84,7 @@ async def on_message(message):
         await mes.delete()
 
     # help
-    if message.content.startswith(prefix + 'help'):
+    if message_split[0] == prefix + 'help':
         strng = '**List of available commands:** \n'
         strng += '*' + prefix + 'provoke <name>* to provoke\n'
         strng += '*' + prefix + 'iam <role name>* to assign self roles (Case Sensitive)\n'
@@ -93,7 +95,7 @@ async def on_message(message):
         await message.channel.send(strng)
 
     # Gaali Galouj
-    if message.content.startswith(prefix + 'provoke'):
+    if message_split[0] == prefix + 'provoke':
         # if me, fuck them
         content = ''
         content += message.content
@@ -116,9 +118,8 @@ async def on_message(message):
             else:
                 await message.channel.send("Please give just a single word name")
 
-
-# list of available roles command
-    if message.content.startswith(prefix + 'roles'):
+    # list of available roles command
+    if message_split[0] == prefix + 'roles':
         strng = '**List of available Roles:**'
         for r in message.guild.roles:
             roleOK = True  # same as role public but different name for the scope of this loop
@@ -132,7 +133,7 @@ async def on_message(message):
         await message.channel.send(strng)
 
     # role un assign command
-    if message.content.startswith(prefix + 'iamnot'):
+    if message_split[0] == prefix + 'iamnot':
         if message.channel.id == ROLES_CHANNEL_ID or 'Moderator' in [y.name for y in message.author.roles]:
             mes = message.content.split()
             output = ''  # temp Rolename
@@ -152,7 +153,7 @@ async def on_message(message):
                 await message.channel.send('You dont have **' + roleName + '** role or it doesnt exist')
 
     # role assign command
-    elif message.content.startswith(prefix + 'iam'):
+    elif message_split[0] == prefix + 'iam':
         if message.channel.id == ROLES_CHANNEL_ID or 'Moderator' in [y.name for y in message.author.roles]:
             mes = message.content.split()
             output = ''  # temp Rolename
@@ -180,7 +181,7 @@ async def on_message(message):
             await message.channel.send('Wrong Channel')
 
     # Clear Messages (For Admin)
-    if message.content.startswith(prefix + 'clear'):
+    if message_split[0] == prefix + 'clear':
         if 'Moderator' in [y.name for y in message.author.roles]:
             number = ''
             for x in message.content[len(prefix) + 6:]:

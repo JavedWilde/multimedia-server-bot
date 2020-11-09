@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/MultimediaBot.iml" filepath="$PROJECT_DIR$/.idea/MultimediaBot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../MultimediaBot_CustomMessage/.idea/MultimediaBot_CustomMessage.iml" filepath="$PROJECT_DIR$/../MultimediaBot_CustomMessage/.idea/MultimediaBot_CustomMessage.iml" />
     </modules>
   </component>
 </project>
