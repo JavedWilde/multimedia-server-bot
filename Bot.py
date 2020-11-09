@@ -188,25 +188,34 @@ async def on_message(message):
 
         # role exclusion
         if message_split[0] == str(prefix + 'rolemanager') and 'Moderator' in [y.name for y in message.author.roles]:
-            if 2 < len(message_split) < 4:
+            if 2 < len(message_split):
+                role_name = ''
+                temp = ''
+                for i in message_split[2:]:
+                    role_name += i
+                    role_name += ' '
+                for i in role_name[0:len(role_name) - 1]:
+                    temp += i
+                role_name = temp
+
                 if message_split[1].lower() == 'exclude':
-                    if message_split[2] in excludedRoles:
-                        await message.channel.send(message_split[2] + ' is already excluded')
-                    elif message_split[2] in [y.name for y in message.guild.roles]:
-                        excludedRoles.append(message_split[2])
-                        await message.channel.send(message_split[2] + ' added to exclusions, it is not assignable by '
-                                                                      'command now')
+                    if role_name in excludedRoles:
+                        await message.channel.send(role_name + ' is already excluded')
+                    elif role_name in [y.name for y in message.guild.roles]:
+                        excludedRoles.append(role_name)
+                        await message.channel.send(role_name + ' added to exclusions, it is not assignable by '
+                                                               'command now')
                     else:
-                        await message.channel.send(message_split[2] + ' doesnt exist. Role names are Caps sensitive')
+                        await message.channel.send(role_name + ' doesnt exist. Role names are Caps sensitive')
                 elif message_split[1].lower() == 'include':
-                    if message_split[2] in excludedRoles:
-                        excludedRoles.remove(message_split[2])
-                        await message.channel.send(message_split[2] + 'removed from exclusions, role is now '
-                                                                      'assignable by command')
-                    elif message_split[2] in [y.name for y in message.guild.roles]:
-                        await message.channel.send(message_split[2] + ' role is not in the exclusions')
+                    if role_name in excludedRoles:
+                        excludedRoles.remove(role_name)
+                        await message.channel.send(role_name + 'removed from exclusions, role is now '
+                                                               'assignable by command')
+                    elif role_name in [y.name for y in message.guild.roles]:
+                        await message.channel.send(role_name + ' role is not in the exclusions')
                     else:
-                        await message.channel.send(message_split[2] + ' doesnt exist. Role names are Caps sensitive')
+                        await message.channel.send(role_name + ' doesnt exist. Role names are Caps sensitive')
                 else:
                     await message.channel.send('Wrong usage, use **' + prefix + 'rolemanager help** for usage guide')
             else:
