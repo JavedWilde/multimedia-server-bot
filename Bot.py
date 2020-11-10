@@ -9,12 +9,27 @@ client = discord.Client(intents=intent)
 
 # command Prefix
 prefix = '.'
+
+help_text = '''
+**List of available commands:**
+*$prefixprovoke <name>* to provoke
+*$prefixurban <search term>* to search a word on urban dictionary
+*$prefixiam <role name>* to assign self roles (Case Sensitive)
+*$prefixiamnot <role name>* to remove self roles (Case Sensitive)
+*$prefixroles* to see available roles
+
+**Admin Commands:**
+*$prefixclear <number of messages>* to delete messages (only accessed by a Mod)
+*$prefixrolemanager help* to manage roles assignable by the bot
+'''
+
 # Gaali
 slur = ['madherchod', 'randwa', 'randi', 'betichod', 'vinoth ki jhaant', 'raand ki gand', 'chutiya', 'gandu', 'muthela',
         'bhayrand', 'napunsak']
-# slur = ['sahil ka papa','sahil ki gaand leta','sahil se chooswata']
+
 # roles that must be excluded from being Given by the bot
-excludedRoles = ['@everyone', 'bots', 'Groovy', 'Rythm', 'Admins', 'SulagtiGaand', 'Moderator']
+excludedRoles = ['@everyone', 'bots', 'Groovy', 'Rythm', 'Admins', 'SulagtiGaand', 'Moderator', 'NotSoBot',
+                 'Professional', 'Dank Memer']
 
 # important Channel IDs
 ROLES_CHANNEL_ID = 774708133150588980
@@ -75,15 +90,9 @@ async def on_message(message):
 
         # help
         if message_split[0] == str(prefix + 'help'):
-            strng = '**List of available commands:** \n'
-            strng += '*' + prefix + 'provoke <name>* to provoke\n'
-            strng += '*' + prefix + 'iam <role name>* to assign self roles (Case Sensitive)\n'
-            strng += '*' + prefix + 'iamnot <role name>* to remove self roles (Case Sensitive)\n'
-            strng += '*' + prefix + 'roles* to see available roles\n\n'
-            strng += '**Admin Commands:**\n'
-            strng += '*' + prefix + 'clear <number of messages>* to delete messages (only accessed by a Mod)\n'
-            strng += '*' + prefix + 'rolemanager help* to manage roles assignable by the bot\n'
-            await message.channel.send(strng)
+            global help_text
+            help_text = help_text.replace('$prefix', prefix)
+            await message.channel.send(help_text)
 
         # urban Command
         if message_split[0] == str(prefix + 'urban'):
