@@ -5,7 +5,7 @@ import UrbanFunc
 
 TOKEN = 'Nzc0NjY1MTAzMzA3NDQwMTc5.X6bFGQ.yGZlmMkGnF2kVes4bTIXPEJi5-8'
 
-prefix = ','
+prefix = '.'
 intent = discord.Intents.all()
 client = Bot(command_prefix=prefix, intents=intent)
 client.remove_command('help')
@@ -161,41 +161,42 @@ async def clear(ctx, *, number):
 
 @client.command()
 async def rolemanager(ctx, *arg):
-    if arg[0].lower() == 'exclude':
-        if arg[1].lower() in [y.lower() for y in excludedRoles]:
-            await ctx.channel.send(arg[1] + ' is already excluded')
-        elif arg[1] in [str(y.name) for y in ctx.guild.roles]:
-            excludedRoles.append(arg[1])
-            await ctx.channel.send(arg[1] + ' added to exclusions, it is not assignable by '
-                                            'command now')
+    if 'Moderator' in [y.name for y in ctx.author.roles]:
+        if arg[0].lower() == 'exclude':
+            if arg[1].lower() in [y.lower() for y in excludedRoles]:
+                await ctx.channel.send(arg[1] + ' is already excluded')
+            elif arg[1] in [str(y.name) for y in ctx.guild.roles]:
+                excludedRoles.append(arg[1])
+                await ctx.channel.send(arg[1] + ' added to exclusions, it is not assignable by '
+                                                'command now')
+            else:
+                await ctx.channel.send(arg[1] + ' doesnt exist. Role names are Caps sensitive')
+        elif arg[0].lower() == 'include':
+            if arg[1] in excludedRoles:
+                excludedRoles.remove(arg[1])
+                await ctx.channel.send(arg[1] + ' removed from exclusions, role is now '
+                                                'assignable by command')
+            elif arg[1].lower() in [str(y.name).lower() for y in ctx.guild.roles]:
+                await ctx.channel.send(arg[1] + ' role is not in the exclusions')
+            else:
+                await ctx.channel.send(arg[1] + ' doesnt exist. Role names are Caps sensitive')
+        elif arg[0].lower() == 'roles':
+            temp = ''
+            for x in excludedRoles:
+                if x != '@everyone':
+                    temp += x
+                    temp += '\n'
+            await ctx.channel.send('Excluded Roles: \n' + temp)
+        elif arg[0].lower() == 'help':
+            temp = 'Available Commands. **Rolenames are Caps sensitive**\n\n'
+            temp += '*' + prefix + 'rolemanager exclude <rolename>* to block a rolename from being assigned ' \
+                                   'by the bot\n'
+            temp += '*' + prefix + 'rolemanager include <rolename>* to allow a rolename to be assigned by ' \
+                                   'the bot\n'
+            temp += '*' + prefix + 'rolemanager roles* to show list of excluded roles\n'
+            await ctx.channel.send(temp)
         else:
-            await ctx.channel.send(arg[1] + ' doesnt exist. Role names are Caps sensitive')
-    elif arg[0].lower() == 'include':
-        if arg[1] in excludedRoles:
-            excludedRoles.remove(arg[1])
-            await ctx.channel.send(arg[1] + ' removed from exclusions, role is now '
-                                            'assignable by command')
-        elif arg[1].lower() in [str(y.name).lower() for y in ctx.guild.roles]:
-            await ctx.channel.send(arg[1] + ' role is not in the exclusions')
-        else:
-            await ctx.channel.send(arg[1] + ' doesnt exist. Role names are Caps sensitive')
-    elif arg[0].lower() == 'roles':
-        temp = ''
-        for x in excludedRoles:
-            if x != '@everyone':
-                temp += x
-                temp += '\n'
-        await ctx.channel.send('Excluded Roles: \n' + temp)
-    elif arg[0].lower() == 'help':
-        temp = 'Available Commands. **Rolenames are Caps sensitive**\n\n'
-        temp += '*' + prefix + 'rolemanager exclude <rolename>* to block a rolename from being assigned ' \
-                               'by the bot\n'
-        temp += '*' + prefix + 'rolemanager include <rolename>* to allow a rolename to be assigned by ' \
-                               'the bot\n'
-        temp += '*' + prefix + 'rolemanager roles* to show list of excluded roles\n'
-        await ctx.channel.send(temp)
-    else:
-        await ctx.channel.send('Wrong usage, use **' + prefix + 'rolemanager help** for usage guide')
+            await ctx.channel.send('Wrong usage, use **' + prefix + 'rolemanager help** for usage guide')
 
 
 @rolemanager.error
