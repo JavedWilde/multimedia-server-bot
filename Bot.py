@@ -99,7 +99,7 @@ async def provoke(ctx, *, arg='ye command likhne wala'):
 async def roles(ctx):
     strng = '**List of available Roles:**'
     for r in ctx.guild.roles:
-        if str(r) not in [y.lower() for y in excludedRoles]:
+        if str(r).lower() not in [y.lower() for y in excludedRoles]:
             strng += '\n'
             strng += str(r)
     await ctx.send(strng)
