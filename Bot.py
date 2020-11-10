@@ -14,20 +14,20 @@ help_text = '''```asciidoc
 List of available commands:
 --------------------------
 
-$prefixprovoke <name> :: provoke the name typed in the command
-$prefixurban <search term> :: search a word on urban dictionary
-$prefixiam <role name> :: to assign self roles
-$prefixiamnot <role name> :: to remove self roles
-$prefixroles :: see available roles
+ $prefixprovoke <name> :: provoke the name typed in the command
+ $prefixurban <search term> :: search a word on urban dictionary
+ $prefixiam <role name> :: to assign self roles
+ $prefixiamnot <role name> :: to remove self roles
+ $prefixroles :: see available roles
 
 
 Admin Commands:
 --------------------------
-$prefixclear <number of messages> :: delete messages
-$prefixspam <number of spams> <spam message>** :: spam messages
-$prefixrolemanager help :: manage roles assignable by the bot
+ $prefixclear <number of messages> :: delete messages
+ $prefixspam <number of spams> <spam message>** :: spam messages
+ $prefixrolemanager help :: manage roles assignable by the bot
 __________________________
-$prefixhelpadmin for all registered commands under Client.Commands. Info For Devs
+ $prefixhelpadmin for all registered commands under Client.Commands. Info For Devs
 ```
 '''
 
