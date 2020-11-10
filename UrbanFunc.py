@@ -39,13 +39,16 @@ $underline
 
     parsed = json.dumps(get_urban_definitions(keyword), indent=4)
     final = json.loads(parsed)
-    text_format = text_format.replace('$word', keyword)
-    text_format = text_format.replace('$underline', returnDash(keyword))
-    key = random.randint(0, len(final)-1)
-    text_format = text_format.replace('$definition1', final[key]['definition'])
-    text_format = text_format.replace('$example1', final[key]['example'])
-    key = random.randint(0, len(final)-1)
-    text_format = text_format.replace('$definition2', final[key]['definition'])
-    text_format = text_format.replace('$example2', final[key]['example'])
-    text_format = text_format.replace('$result', str(len(final)))
+    if len(final) > 1:
+        text_format = text_format.replace('$word', keyword)
+        text_format = text_format.replace('$underline', returnDash(keyword))
+        key = random.randint(0, len(final)-1)
+        text_format = text_format.replace('$definition1', final[key]['definition'])
+        text_format = text_format.replace('$example1', final[key]['example'])
+        key = random.randint(0, len(final)-1)
+        text_format = text_format.replace('$definition2', final[key]['definition'])
+        text_format = text_format.replace('$example2', final[key]['example'])
+        text_format = text_format.replace('$result', str(len(final)))
+    else:
+        text_format = 'No results found'
     return text_format
