@@ -41,7 +41,7 @@ $underline
     key = random.randint(0, 4)
     text_format = text_format.replace('$definition1', final[key]['definition'])
     text_format = text_format.replace('$example1', final[key]['example'])
-    key = random.randint(5, 9)
+    key = random.randint(5, 8)
     text_format = text_format.replace('$definition2', final[key]['definition'])
     text_format = text_format.replace('$example2', final[key]['example'])
     return text_format
