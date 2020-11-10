@@ -22,6 +22,10 @@ __Admin Commands:__
 **$prefixclear <number of messages>** to delete messages
 **$prefixspam <number of spams> <spam message>** to spam messages
 **$prefixrolemanager help** to manage roles assignable by the bot
+```asciidoc
+__________
+Type $prefixhelpadmin for all registered commands under Client.Commands. For Devs
+```
 '''
 
 # Gaali
@@ -76,6 +80,16 @@ async def help(ctx):
 
 
 @client.command()
+async def helpadmin(ctx):
+    if 'Moderator' in [str(y.name) for y in ctx.author.roles]:
+        helptext = "```asciidoc\n"
+        for command in client.commands:
+            helptext += f"{command}\n"
+        helptext += "___________\n All available commands in Client.commands. Info For developers```"
+        await ctx.send(helptext)
+
+
+@client.command()
 async def urban(ctx, *, arg):
     await ctx.send(UrbanFunc.runUrban(arg))
 
@@ -99,7 +113,7 @@ async def provoke(ctx, *, arg='ye command likhne wala'):
 async def roles(ctx):
     strng = '**List of available Roles:**'
     for r in ctx.guild.roles:
-        if str(r) not in [y.lower() for y in excludedRoles]:
+        if str(r).lower() not in [y.lower() for y in excludedRoles]:
             strng += '\n'
             strng += str(r)
     await ctx.send(strng)
