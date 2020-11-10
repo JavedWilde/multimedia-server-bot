@@ -22,9 +22,8 @@ __Admin Commands:__
 **$prefixclear <number of messages>** to delete messages
 **$prefixspam <number of spams> <spam message>** to spam messages
 **$prefixrolemanager help** to manage roles assignable by the bot
-```asciidoc
-__________
-Type $prefixhelpadmin for all registered commands under Client.Commands. For Devs
+```py
+# $prefixhelpadmin for all registered commands under Client.Commands. Info For Devs
 ```
 '''
 
