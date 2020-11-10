@@ -32,6 +32,9 @@ $underline
  $definition2
 [example]
  $example2
+ 
+ --------------
+ showing 2 out of $result results
 ```'''
 
     parsed = json.dumps(get_urban_definitions(keyword), indent=4)
@@ -44,4 +47,5 @@ $underline
     key = random.randint(0, len(final)-1)
     text_format = text_format.replace('$definition2', final[key]['definition'])
     text_format = text_format.replace('$example2', final[key]['example'])
+    text_format = text_format.replace('$result', str(len(final)))
     return text_format
