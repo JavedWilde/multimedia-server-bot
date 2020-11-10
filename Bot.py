@@ -1,5 +1,6 @@
 import discord
 import random
+import UrbanFunc
 
 TOKEN = 'Nzc0NjY1MTAzMzA3NDQwMTc5.X6bFGQ.yGZlmMkGnF2kVes4bTIXPEJi5-8'
 
@@ -60,22 +61,6 @@ async def on_message(message):
                 for x in range(0, 10):
                     await message.channel.send(output)
 
-        '''
-        if message.content.startswith('beta isko gaali do'):
-            if message.author.id == DADDYS_ID:
-                x = random.randint(0, len(slur))
-                await message.channel.send(slur[x] + ' h ye banda')
-            else:
-                x = random.randint(0, len(slur))
-                await message.channel.send('ni dunga, kya kr lega ' + slur[x])
-        if message.content.startswith('beta isko bhi gaali do'):
-            if message.author.id == DADDYS_ID:
-                x = random.randint(0, len(slur))
-                await message.channel.send('ye banda bhi ' + slur[x] + ' h')
-            else:
-                x = random.randint(0, len(slur))
-                await message.channel.send('ni dunga, kya kr lega ' + slur[x])
-        '''
         # check server speed
         if message_split[0] == str(prefix + 'ping'):
             mes = await message.channel.send('meh')
@@ -99,6 +84,17 @@ async def on_message(message):
             strng += '*' + prefix + 'clear <number of messages>* to delete messages (only accessed by a Mod)\n'
             strng += '*' + prefix + 'rolemanager help* to manage roles assignable by the bot\n'
             await message.channel.send(strng)
+
+        # urban Command
+        if message_split[0] == str(prefix + 'urban'):
+            if len(message_split) > 1:
+                strng = ''
+                for x in message_split[1:]:
+                    strng += x
+                    strng += ' '
+                await message.channel.send(UrbanFunc.runUrban(strng))
+            else:
+                await message.channel.send('Type a keyword to search after the command')
 
         # Gaali Galouj
         if message_split[0] == str(prefix + 'provoke'):
