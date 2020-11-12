@@ -22,7 +22,6 @@ def returnDash(string):
 
 def runUrbanEmbed(keyword):
     urban_dict = dict()
-    footer = ''
     embed = Embed(title=keyword + '\n\u200b', color=Color.red())
 
     parsed = json.dumps(get_urban_definitions(keyword), indent=4)
