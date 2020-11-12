@@ -23,7 +23,7 @@ def returnDash(string):
 def runUrbanEmbed(keyword):
     urban_dict = dict()
     footer = ''
-    embed = Embed(title=keyword, color=Color.red())
+    embed = Embed(title=keyword + '\n\u200b', color=Color.red())
 
     parsed = json.dumps(get_urban_definitions(keyword), indent=4)
     final = json.loads(parsed)
@@ -49,11 +49,14 @@ def runUrbanEmbed(keyword):
         footer = f'_______________________\nShowing 1 out of {str(len(final))} results'
 
     else:
-        return Embed(title=keyword,
+        return Embed(title=keyword + '\u200b',
                      description='No Results Found')
 
     for key in urban_dict:
-        embed.add_field(name=key, value=str(urban_dict.get(key)), inline=False)
+        if key[:-2].lower() == 'example':
+            embed.add_field(name=str(key[:-2]), value=str(urban_dict.get(key)) + '\n\u200b', inline=False)
+        else:
+            embed.add_field(name=key, value=str(urban_dict.get(key)), inline=False)
     embed.set_footer(text=footer)
 
     return embed
