@@ -94,12 +94,18 @@ async def helpadmin(ctx):
 
 @client.command()
 async def urban(ctx, *, arg):
-    await ctx.send(UrbanFunc.runUrban(arg))
+    try:
+        await ctx.send(embed=UrbanFunc.runUrbanEmbed(arg))
+    except discord.HTTPException:
+        embed = UrbanFunc.runUrbanEmbed(arg)
+        embed.set_footer(text=f'{embed.footer.__getattribute__("text")}\n\nPrevious attempt returned an '  
+                              f'HTTPException error,\nthis is a second attempt')
+        await ctx.send(embed=embed)
 
 
 @urban.error
 async def urban_error(ctx, error):
-    await ctx.send('Type a keyword to search after the command')
+    await ctx.send('Command threw an error, if the error is an HTTPException error, all previous attempts have failed')
     await ctx.send(f'```py\n# {error}```')
 
 
