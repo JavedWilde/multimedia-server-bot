@@ -131,7 +131,7 @@ async def iam(ctx, *, roleName=None):
 
         role_id = guild_roles.get(str(roleName).lower())
         role = discord.utils.get(ctx.guild.roles, id=role_id)
-        if role is None or str(role) in [a.lower() for a in excludedRoles]:
+        if role is None or str(role).lower() in [a.lower() for a in excludedRoles]:
             if ctx.author.id == DADDYS_ID:
                 await ctx.send('Yes Daddy :weary: Harder Please')
             else:
