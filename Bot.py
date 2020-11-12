@@ -10,26 +10,18 @@ intent = discord.Intents.all()
 client = Bot(command_prefix=prefix, intents=intent)
 client.remove_command('help')
 
-help_text = '''```asciidoc
-List of available commands:
---------------------------
+help_text = {
+    'provoke <name>': 'provoke the name typed in the command',
+    'urban <search term>': 'search a word on urban dictionary',
+    'iamnot <role name>': 'to remove self roles',
+    'roles': 'see available roles\n\u200b\n\u200b',
 
- $prefixprovoke <name> :: provoke the name typed in the command
- $prefixurban <search term> :: search a word on urban dictionary
- $prefixiam <role name> :: to assign self roles
- $prefixiamnot <role name> :: to remove self roles
- $prefixroles :: see available roles
+    'Admin Commands': '__________________',
+    'clear <number of messages>': 'delete messages',
+    'spam <number of spams> <spam message>': 'spam messages',
+    'rolemanager help': 'manage roles assignable by the bot'
+}
 
-
-Admin Commands:
---------------------------
- $prefixclear <number of messages> :: delete messages
- $prefixspam <number of spams> <spam message>** :: spam messages
- $prefixrolemanager help :: manage roles assignable by the bot
-__________________________
- $prefixhelpadmin for all registered commands under Client.Commands. Info For Devs
-```
-'''
 
 # Gaali
 slur = ['madherchod', 'randwa', 'randi', 'betichod', 'vinoth ki jhaant', 'raand ki gand', 'chutiya', 'gandu', 'muthela',
@@ -77,9 +69,16 @@ async def ping(ctx):
 
 @client.command()
 async def help(ctx):
-    global help_text
-    help_text = help_text.replace('$prefix', prefix)
-    await ctx.send(help_text)
+    embeded = discord.Embed(title='List of Available commands', description='__________________',
+                            color=discord.Color.red())
+    embeded.set_footer(text='__________________________\n' + prefix + 'helpadmin for all registered commands under '
+                                                                      'Client.Commands. Info For Devs')
+    for key in help_text:
+        if key == 'Admin Commands':
+            embeded.add_field(name=key, value=str(help_text.get(key)), inline=False)
+        else:
+            embeded.add_field(name=prefix + key, value=str(help_text.get(key)), inline=False)
+    await ctx.send(embed=embeded)
 
 
 @client.command()
@@ -98,7 +97,7 @@ async def urban(ctx, *, arg):
         await ctx.send(embed=UrbanFunc.runUrbanEmbed(arg))
     except discord.HTTPException:
         embed = UrbanFunc.runUrbanEmbed(arg)
-        embed.set_footer(text=f'{embed.footer.__getattribute__("text")}\n\nPrevious attempt returned an '  
+        embed.set_footer(text=f'{embed.footer.__getattribute__("text")}\n\nPrevious attempt returned an '
                               f'HTTPException error,\nthis is a second attempt')
         await ctx.send(embed=embed)
 
