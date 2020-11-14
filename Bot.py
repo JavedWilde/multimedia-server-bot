@@ -151,12 +151,13 @@ async def provoke(ctx, *, arg='ye command likhne wala'):
 
 @client.command()
 async def roles(ctx):
-    strng = '**List of available Roles:**'
+    strng = ''
     for r in ctx.guild.roles:
         if str(r).lower() not in [y.lower() for y in excludedRoles]:
             strng += '\n'
             strng += str(r)
-    await ctx.send(strng)
+    embeded = discord.Embed(title='List of available Roles:', description=strng, color=discord.Color.red())
+    await ctx.send(embed=embeded)
 
 
 @client.command()
