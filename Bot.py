@@ -2,8 +2,8 @@ import discord
 from discord.ext.commands import Bot
 import random
 import UrbanFunc
-
-TOKEN = 'Nzc0NjY1MTAzMzA3NDQwMTc5.X6bFGQ.yGZlmMkGnF2kVes4bTIXPEJi5-8'
+import os
+import json
 
 prefix = '.'
 intent = discord.Intents.all()
@@ -20,8 +20,7 @@ help_text = {
     'clear <number of messages>': 'delete messages',
     'spam <number of spams> <spam message>': 'spam messages',
     'rolemanager help': 'manage roles assignable by the bot'
-}
-
+}  # dictionary
 
 # Gaali
 slur = ['madherchod', 'randwa', 'randi', 'betichod', 'vinoth ki jhaant', 'raand ki gand', 'chutiya', 'gandu', 'muthela',
@@ -46,11 +45,43 @@ DADDYS_ID = 389432819056771072
 @client.event
 async def on_ready():
     print('Bot On')
+    for filename in os.listdir('./Cogs'):
+        if filename.endswith('.py'):
+            client.load_extension(f'Cogs.{filename[:-3]}')
+
+
+@client.event
+async def on_command_error(ctx, error):
+    if not isinstance(error, discord.ext.commands.CommandNotFound):
+        daddy = client.get_user(id=DADDYS_ID)
+        channel = await daddy.create_dm()
+        await channel.send(f' error occured when user `{ctx.author}`, id - `{ctx.author.id}` accessed the command '
+                           f'`{ctx.message.content}`, error details: \n```py\n#{error}\n```')
+
+
+@client.command()
+async def loadcog(ctx, arg):
+    if ctx.message.author.guild_permissions.administrator:
+        try:
+            client.load_extension(f'Cogs.{arg}')
+        except discord.ext.commands.ExtensionAlreadyLoaded:
+            await ctx.send('Cog already loaded')
+        except discord.ext.commands.ExtensionNotFound:
+            await ctx.send('Cog not found')
+
+
+@client.command()
+async def unloadcog(ctx, arg):
+    if ctx.message.author.guild_permissions.administrator:
+        try:
+            client.unload_extension(f'Cogs.{arg}')
+        except discord.ext.commands.ExtensionNotLoaded:
+            await ctx.send('Cog not loaded or not found')
 
 
 @client.command()
 async def spam(ctx, arg1, *, arg2):
-    if 'Moderator' in [y.name for y in ctx.message.author.roles]:
+    if ctx.message.author.guild_permissions.administrator:
         for x in range(0, int(arg1)):
             await ctx.message.channel.send(arg2)
 
@@ -83,7 +114,7 @@ async def help(ctx):
 
 @client.command()
 async def helpadmin(ctx):
-    if 'Moderator' in [str(y.name) for y in ctx.author.roles]:
+    if ctx.message.author.guild_permissions.administrator:
         helptext = "```asciidoc\n"
         for command in client.commands:
             helptext += f"{command}\n"
@@ -129,7 +160,7 @@ async def roles(ctx):
 
 @client.command()
 async def iam(ctx, *, roleName=None):
-    if ctx.channel.id == ROLES_CHANNEL_ID or 'Moderator' in [y.name for y in ctx.author.roles]:
+    if ctx.channel.id == ROLES_CHANNEL_ID or ctx.message.author.guild_permissions.administrator:
         guild_roles = dict()
         for r in ctx.guild.roles:
             guild_roles[str(r.name).lower()] = r.id
@@ -150,7 +181,7 @@ async def iam(ctx, *, roleName=None):
 
 @client.command()
 async def iamnot(ctx, *, roleName='None'):
-    if ctx.channel.id == ROLES_CHANNEL_ID or 'Moderator' in [y.name for y in ctx.author.roles]:
+    if ctx.channel.id == ROLES_CHANNEL_ID or ctx.message.author.guild_permissions.administrator:
         guild_roles = dict()
         for r in ctx.guild.roles:
             guild_roles[str(r.name).lower()] = r.id
@@ -165,25 +196,19 @@ async def iamnot(ctx, *, roleName='None'):
 
 
 @client.command()
-async def clear(ctx, *, number):
-    if 'Moderator' in [y.name for y in ctx.author.roles]:
-        if number.isdigit():
-            if int(number) < 101:
-                mgs = []  # Empty list to put all the messages in the log
-                async for x in ctx.channel.history(limit=int(number) + 1):
-                    mgs.append(x)
-                await ctx.channel.delete_messages(mgs)
-            else:
-                await ctx.channel.send('Can only bulk delete messages up to 100 messages')
+async def clear(ctx, number=0):
+    if ctx.message.author.guild_permissions.administrator:
+        if number > 1:
+            await ctx.channel.purge(limit=number + 1)
         else:
-            await ctx.channel.send('Please use a number to clear Chat')
+            await ctx.send('Please specify the number of messsages to delete')
     else:
         await ctx.channel.send('You dont have enough permissions')
 
 
 @client.command()
 async def rolemanager(ctx, *arg):
-    if 'Moderator' in [y.name for y in ctx.author.roles]:
+    if ctx.message.author.guild_permissions.administrator:
         if arg[0].lower() == 'exclude':
             if arg[1].lower() in [y.lower() for y in excludedRoles]:
                 await ctx.channel.send(arg[1] + ' is already excluded')
@@ -238,4 +263,5 @@ async def on_member_join(member):
         + client.get_channel(id=ROLES_CHANNEL_ID).mention + ' to yourself')
 
 
-client.run('Nzc0NjY1MTAzMzA3NDQwMTc5.X6bFGQ.yGZlmMkGnF2kVes4bTIXPEJi5-8')
+envJson = json.load(open('env'))
+client.run(envJson['token'])
