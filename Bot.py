@@ -198,7 +198,7 @@ async def iamnot(ctx, *, roleName='None'):
 @client.command()
 async def clear(ctx, number=0):
     if ctx.message.author.guild_permissions.administrator:
-        if number > 1:
+        if number > 0:
             await ctx.channel.purge(limit=number + 1)
         else:
             await ctx.send('Please specify the number of messsages to delete')
