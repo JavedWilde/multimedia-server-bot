@@ -254,10 +254,10 @@ async def rolemanager_error(ctx, error):
 
 @client.event
 async def on_member_join(member):
-    channel = client.get_channel(id=INTRO_CHANNEL_ID)
+    channel = member.guild.system_channel
     myid = '<@' + str(member.id) + '>'
     await channel.send(
-        'Hey ' + myid + ', welcome to ' + client.get_guild(774541979085438978).name +
+        'Hey ' + myid + ', welcome to ' + member.guild.name +
         ' Server! enjoy your stay in the server make sure to read the ' + client.get_channel(
             id=RULES_CHANNEL_ID).mention + ' and assign '
         + client.get_channel(id=ROLES_CHANNEL_ID).mention + ' to yourself')
