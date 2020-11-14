@@ -65,6 +65,7 @@ async def loadcog(ctx, arg):
     if ctx.message.author.guild_permissions.administrator:
         try:
             client.load_extension(f'Cogs.{arg}')
+            await ctx.send('Cog loaded successfully')
         except discord.ext.commands.ExtensionAlreadyLoaded:
             await ctx.send('Cog already loaded')
         except discord.ext.commands.ExtensionNotFound:
@@ -76,6 +77,7 @@ async def unloadcog(ctx, arg):
     if ctx.message.author.guild_permissions.administrator:
         try:
             client.unload_extension(f'Cogs.{arg}')
+            await ctx.send('Cog unloaded successfully')
         except discord.ext.commands.ExtensionNotLoaded:
             await ctx.send('Cog not loaded or not found')
 
