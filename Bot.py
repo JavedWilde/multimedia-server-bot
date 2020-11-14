@@ -5,7 +5,8 @@ import UrbanFunc
 import os
 import json
 
-prefix = '.'
+envJson = json.load(open('env'))
+prefix = envJson['prefix']
 intent = discord.Intents.all()
 client = Bot(command_prefix=prefix, intents=intent)
 client.remove_command('help')
@@ -263,5 +264,4 @@ async def on_member_join(member):
         + client.get_channel(id=ROLES_CHANNEL_ID).mention + ' to yourself')
 
 
-envJson = json.load(open('env'))
 client.run(envJson['token'])
