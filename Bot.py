@@ -42,12 +42,12 @@ INTRO_CHANNEL_ID = 774619692550586369
 # user IDs
 DADDYS_ID = 389432819056771072
 
-
+auto_load = False
 @client.event
 async def on_ready():
     print('Bot On')
     for filename in os.listdir('./Cogs'):
-        if filename.endswith('.py'):
+        if filename.endswith('.py') and auto_load == True:
             client.load_extension(f'Cogs.{filename[:-3]}')
 
 
