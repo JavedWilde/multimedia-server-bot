@@ -1,29 +1,55 @@
 from discord.ext import commands
-from discord import Embed
-import json
-import operator
-import os
+# from discord import Embed
+# import json
+# import operator
+# import os
+import mysql.connector as sql
+
+db = sql.connect(
+    host='pass.mrcow.xyz',
+    port='33069',
+    user='javedUser',
+    passwd='nnBmkRLFjeKRR9JrzdrTzLi123!',
+    database='javed'
+)
 
 
-def update_data(users_data, user):
-    if str(user.id) not in users_data:
-        users_data[str(user.id)] = {}
-        users_data[str(user.id)]['exp'] = 0
-        users_data[str(user.id)]['lvl'] = 1
+def checkTableExists(dbcon, tablename):
+    dbcur = dbcon.cursor(buffered=True)
+    if not isinstance(tablename, str):
+        tb = str(tablename)
+    else:
+        tb = tablename
+    dbcur.execute("""
+        SELECT COUNT(*)
+        FROM information_schema.tables
+        WHERE table_name = '{0}'
+        """.format(tb.replace('\'', '\'\'')))
+    if dbcur.fetchone()[0] == 1:
+        dbcur.close()
+        return True
+
+    dbcur.close()
+    return False
 
 
-def add_exp(users_data, user, amount):
-    users_data[str(user.id)]['exp'] += amount
+async def updateData(userid, tablename, message=None):
+    cur = db.cursor(buffered=True)
+    cur.execute(f"SELECT userid, exp, level FROM {tablename} WHERE userid={userid}")
+    if cur.rowcount < 1:
+        cur.execute(f"INSERT INTO {tablename} (userid, exp, level) VALUES ({userid}, 0, 1)")
+    else:
+        user = cur.fetchone()
+        tempXP = user[1] + 5
+        tempLVL = user[2]
+        lvl_end = int(tempXP ** (1 / 4))
+        if tempLVL < lvl_end:
+            tempLVL = tempLVL + 1
+            if message is not None:
+                await message.channel.send(f'{message.author.mention} leveled up. New Level : {tempLVL}')
 
-
-async def level_up(users_data, user, channel):
-    exp = users_data[str(user.id)]['exp']
-    lvl_start = users_data[str(user.id)]['lvl']
-    lvl_end = int(exp ** (1 / 4))
-
-    if lvl_start < lvl_end:
-        users_data[str(user.id)]['lvl'] += 1
-        await channel.send(f'{user.mention} leveled up. New Level - {users_data[str(user.id)]["lvl"]}')
+        cur.execute(f"UPDATE {tablename} SET exp = {tempXP}, level = {tempLVL} WHERE userid = {userid}")
+    db.commit()
 
 
 class Test(commands.Cog):
@@ -33,83 +59,33 @@ class Test(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        try:
-            open(f'.//Cogs//rank_data//{member.guild.id}_ranks.json', 'r')
-        except FileNotFoundError:
-            try:
-                os.mkdir(f'.//Cogs//rank_data//')
-            except FileExistsError:
-                with open(f'.//Cogs//rank_data//{member.guild.id}_ranks.json', 'w+') as f:
-                    f.write('{}')
-            else:
-                with open(f'.//Cogs//rank_data//{member.guild.id}_ranks.json', 'w+') as f:
-                    f.write('{}')
-        finally:
-            with open(f'.//Cogs//rank_data//{member.guild.id}_ranks.json', 'r') as f:
-                users = json.load(f)
-
-        update_data(users, member)
-
-        with open(f'.//Cogs//rank_data//{member.guild.id}_ranks.json', 'w') as f:
-            json.dump(users, f, indent=4)
+        dbcursor = db.cursor(buffered=True)
+        if checkTableExists(db, f'{member.guild.id}_ranks'):
+            await updateData(member.id, f'{member.guild.id}_ranks')
+        else:
+            dbcursor.execute(f'CREATE TABLE {member.guild.id}_ranks (userid bigint PRIMARY KEY, exp int UNSIGNED, level'
+                             f' int UNSIGNED)')
+            await updateData(member.id, f'{member.guild.id}_ranks')
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        try:
-            open(f'.//Cogs//rank_data//{message.guild.id}_ranks.json', 'r')
-        except FileNotFoundError:
-            try:
-                os.mkdir(f'.//Cogs//rank_data//')
-            except FileExistsError:
-                with open(f'.//Cogs//rank_data//{message.guild.id}_ranks.json', 'w+') as f:
-                    f.write('{}')
-            else:
-                with open(f'.//Cogs//rank_data//{message.guild.id}_ranks.json', 'w+') as f:
-                    f.write('{}')
-        finally:
-            with open(f'.//Cogs//rank_data//{message.guild.id}_ranks.json', 'r') as f:
-                users = json.load(f)
+        dbcursor = db.cursor(buffered=True)
+        if message.author.id == self.client.user.id:
+            return
 
-        update_data(users, message.author)
-        add_exp(users, message.author, 5)
-        await level_up(users, message.author, message.channel)
+        if checkTableExists(db, f'{message.guild.id}_ranks'):
+            await updateData(message.author.id, f'{message.guild.id}_ranks', message)
+        else:
+            dbcursor.execute(f'CREATE TABLE {message.guild.id}_ranks (userid bigint PRIMARY KEY, exp int UNSIGNED,'
+                             f' level int UNSIGNED)')
+            await updateData(message.author.id, f'{message.guild.id}_ranks', message)
 
-        with open(f'.//Cogs//rank_data//{message.guild.id}_ranks.json', 'w') as f:
-            json.dump(users, f, indent=4)
-
-    @commands.command(aliases=['lb'])
-    async def leaderboard(self, ctx):
-        try:
-            open(f'.//Cogs//rank_data//{ctx.guild.id}_ranks.json', 'r')
-        except FileNotFoundError:
-            try:
-                os.mkdir(f'.//Cogs//rank_data//')
-            except FileExistsError:
-                with open(f'.//Cogs//rank_data//{ctx.guild.id}_ranks.json', 'w+') as f:
-                    f.write('{}')
-            else:
-                with open(f'.//Cogs//rank_data//{ctx.guild.id}_ranks.json', 'w+') as f:
-                    f.write('{}')
-        finally:
-            with open(f'.//Cogs//rank_data//{ctx.guild.id}_ranks.json', 'r') as f:
-                users = json.load(f)
-
-        temp_dict = dict()
-        for key in users:
-            temp_dict[key] = users[key]['exp']
-        sorted_d = dict(sorted(temp_dict.items(), key=operator.itemgetter(1), reverse=True))
-
-        embeded = Embed(title='**LeaderBoard**')
-        embeded.set_thumbnail(url=ctx.guild.icon_url)
-        embeded.set_author(name=ctx.guild.name)
-        for iteration, key in enumerate(sorted_d):
-            member_name = ctx.guild.get_member(int(key))
-            embeded.add_field(name=f'{iteration + 1}. {str(member_name)[:-5]}',
-                              value=f'```cs\nLevel : {int(sorted_d.get(key) ** (1 / 4))}'
-                                    f'              Exp : {str(sorted_d.get(key))}              ```',
-                              inline=False)
-
-        await ctx.send(embed=embeded)
+    @commands.command(aliases=['sqlx'])
+    async def sql(self, ctx):
+        dbcursor = db.cursor(buffered=True)
+        dbcursor.execute(f"SELECT * FROM {ctx.guild.id}_ranks")
+        for x in dbcursor.fetchall():
+            await ctx.send(x)
 
 
 def setup(client):
