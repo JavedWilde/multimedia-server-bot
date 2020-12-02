@@ -97,7 +97,7 @@ async def unloadcog(ctx, arg):
 @client.command()
 async def spam(ctx, arg1, *, arg2):
     if ctx.message.author.guild_permissions.administrator:
-        for x in range(0, int(arg1)):
+        for _ in range(0, int(arg1)):
             await ctx.message.channel.send(arg2)
 
 
