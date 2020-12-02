@@ -1,17 +1,29 @@
 from discord.ext import commands
 # from discord import Embed
-# import json
-# import operator
-# import os
+import json
+import os
 import mysql.connector as sql
 
-db = sql.connect(
-    host='pass.mrcow.xyz',
-    port='33069',
-    user='javedUser',
-    passwd='nnBmkRLFjeKRR9JrzdrTzLi123!',
-    database='javed'
-)
+if os.environ.get('IS_HEROKU', None):
+    # file is on server side, use heroku/server token
+    db = sql.connect(
+        host=os.environ.get('SQL_HOST'),
+        port=os.environ.get('SQL_PORT'),
+        user=os.environ.get('SQL_USER'),
+        passwd=os.environ.get('SQL_PASS'),
+        database='javed'
+    )
+else:
+    # file is on development pc/local, use .env file stored on local
+    envJson = json.load(open('.env'))
+    print()
+    db = sql.connect(
+        host=envJson['host'],
+        port=envJson['port'],
+        user=envJson['user'],
+        passwd=envJson['passwd'],
+        database='javed'
+    )
 
 
 def checkTableExists(dbcon, tablename):

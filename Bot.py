@@ -6,8 +6,7 @@ import os
 import json
 
 # checking if the file is running on serverside
-is_prod = os.environ.get('IS_HEROKU', None)
-if is_prod:
+if os.environ.get('IS_HEROKU', None):
     # file is on server side, use heroku/server token
     token = os.environ.get('TOKEN')
     prefix = os.environ.get('PREFIX')
