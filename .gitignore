@@ -1,6 +1,5 @@
-/.idea
 .env
-venv
+/venv
 /.vscode
 /__pycache__
 /Cogs/__pycache__
