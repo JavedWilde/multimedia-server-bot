@@ -5,8 +5,19 @@ import UrbanFunc
 import os
 import json
 
-envJson = json.load(open('env'))
-prefix = envJson['prefix']
+# checking if the file is running on serverside
+is_prod = os.environ.get('IS_HEROKU', None)
+if is_prod:
+    # file is on server side, use heroku/server token
+    token = os.environ.get('TOKEN')
+    prefix = os.environ.get('PREFIX')
+else:
+    # file is on development pc/local, use .env file stored on local
+    envJson = json.load(open('.env'))
+    token = envJson['token']
+    prefix = envJson['prefix']
+
+
 intent = discord.Intents.all()
 client = Bot(command_prefix=prefix, intents=intent)
 client.remove_command('help')
@@ -269,4 +280,4 @@ async def on_member_join(member):
         + client.get_channel(id=ROLES_CHANNEL_ID).mention + ' to yourself')
 
 
-client.run(envJson['token'])
+client.run(token)
