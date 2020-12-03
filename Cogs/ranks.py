@@ -112,6 +112,28 @@ class Test(commands.Cog):
         else:
             await ctx.send(f'Database : {ctx.guild.id}_ranks not Found')
 
+    @commands.command()
+    async def rank(self, ctx):
+        dbcursor = db.cursor(buffered=True)
+        if checkTableExists(db, f'{ctx.guild.id}_ranks'):
+            try:
+                member_obj = ctx.message.mentions[0]
+            except IndexError:
+                member_obj = ctx.author
+            dbcursor.execute(f"SELECT userid, exp, level FROM {ctx.guild.id}_ranks ORDER BY exp DESC")
+            for iteration, row in enumerate(dbcursor.fetchall()):
+                if row[0] == member_obj.id:
+                    embeded = Embed(title=f'**{member_obj.name}**', 
+                                    description=f'```cs\nLevel : {row[2]}              Exp : {str(row[1])}              ```')
+                    embeded.set_author(name=f'Rank : {iteration + 1}')
+                    embeded.set_thumbnail(url=member_obj.avatar_url)
+                    if member_obj.nick is not None:
+                        embeded.set_footer(text=f'Nickname : {member_obj.nick}')
+                    await ctx.send(embed=embeded)
+                    return
+        else:
+            await ctx.send(f'Database : {ctx.guild.id}_ranks not Found')     
+
 
 def setup(client):
     client.add_cog(Test(client))
