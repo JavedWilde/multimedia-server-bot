@@ -1,5 +1,5 @@
 from discord.ext import commands
-# from discord import Embed
+from discord import Embed
 import json
 import os
 import mysql.connector as sql
@@ -82,7 +82,7 @@ class Test(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         dbcursor = db.cursor(buffered=True)
-        if message.author.id == self.client.user.id:
+        if message.author.bot:
             return
 
         if checkTableExists(db, f'{message.guild.id}_ranks'):
@@ -92,12 +92,25 @@ class Test(commands.Cog):
                              f' level int UNSIGNED)')
             await updateData(message.author.id, f'{message.guild.id}_ranks', message)
 
-    @commands.command(aliases=['sqlx'])
-    async def sql(self, ctx):
+    @commands.command(aliases=['lb'])
+    async def leaderboard(self, ctx):
         dbcursor = db.cursor(buffered=True)
-        dbcursor.execute(f"SELECT * FROM {ctx.guild.id}_ranks")
-        for x in dbcursor.fetchall():
-            await ctx.send(x)
+        if checkTableExists(db, f'{ctx.guild.id}_ranks'):
+            dbcursor.execute(f"SELECT userid, exp, level FROM {ctx.guild.id}_ranks ORDER BY exp DESC LIMIT 10")
+            embeded = Embed(title='**LeaderBoard**')
+            embeded.set_thumbnail(url=ctx.guild.icon_url)
+            embeded.set_author(name=ctx.guild.name)
+            for iteration, row in enumerate(dbcursor.fetchall()):
+                member_name = ctx.guild.get_member(row[0])
+                embeded.add_field(name=f'{iteration+1}. {str(member_name)[:-5]}',
+                                    value=f'```cs\nLevel : {row[2]}              Exp : {str(row[1])}              ```',
+                                    inline=False)
+                print(row, iteration)
+
+            await ctx.send(embed=embeded)
+            
+        else:
+            await ctx.send(f'Database : {ctx.guild.id}_ranks not Found')
 
 
 def setup(client):
