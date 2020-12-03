@@ -64,7 +64,7 @@ async def updateData(userid, tablename, message=None):
     db.commit()
 
 
-class Test(commands.Cog):
+class Ranks(commands.Cog):
 
     def __init__(self, client):
         self.client = client
@@ -136,4 +136,4 @@ class Test(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Test(client))
+    client.add_cog(Ranks(client))
