@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Embed
+from discord import Embed, Color
 import json
 import os
 import mysql.connector as sql
@@ -97,7 +97,7 @@ class Ranks(commands.Cog):
         dbcursor = db.cursor(buffered=True)
         if checkTableExists(db, f'{ctx.guild.id}_ranks'):
             dbcursor.execute(f"SELECT userid, exp, level FROM {ctx.guild.id}_ranks ORDER BY exp DESC LIMIT 10")
-            embeded = Embed(title='**LeaderBoard**')
+            embeded = Embed(title='**LeaderBoard**', color=Color.red())
             embeded.set_thumbnail(url=ctx.guild.icon_url)
             embeded.set_author(name=ctx.guild.name)
             for iteration, row in enumerate(dbcursor.fetchall()):
@@ -124,7 +124,7 @@ class Ranks(commands.Cog):
             for iteration, row in enumerate(dbcursor.fetchall()):
                 if row[0] == member_obj.id:
                     embeded = Embed(title=f'**{member_obj.name}**', 
-                                    description=f'```cs\nLevel : {row[2]}              Exp : {str(row[1])}              ```')
+                                    description=f'```cs\nLevel : {row[2]}              Exp : {str(row[1])}              ```', color=Color.red())
                     embeded.set_author(name=f'Rank : {iteration + 1}')
                     embeded.set_thumbnail(url=member_obj.avatar_url)
                     if member_obj.nick is not None:
