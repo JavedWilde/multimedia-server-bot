@@ -1,6 +1,10 @@
 from discord.ext import commands
+<<<<<<< HEAD
 from discord import Embed
 import discord
+=======
+from discord import Embed, Color
+>>>>>>> b1d01aee57b78fdf77a2c7835f1aea526ae4063a
 import json
 import os
 import mysql.connector as sql
@@ -99,7 +103,7 @@ class Ranks(commands.Cog):
         dbcursor = db.cursor(buffered=True)
         if checkTableExists(db, f'{ctx.guild.id}_ranks'):
             dbcursor.execute(f"SELECT userid, exp, level FROM {ctx.guild.id}_ranks ORDER BY exp DESC LIMIT 10")
-            embeded = Embed(title='**LeaderBoard**')
+            embeded = Embed(title='**LeaderBoard**', color=Color.red())
             embeded.set_thumbnail(url=ctx.guild.icon_url)
             embeded.set_author(name=ctx.guild.name)
             for iteration, row in enumerate(dbcursor.fetchall()):
