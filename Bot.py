@@ -4,6 +4,8 @@ import random
 import UrbanFunc
 import os
 import json
+import Rank_Image
+
 
 # checking if the file is running on serverside
 if os.environ.get('IS_HEROKU', None):
@@ -68,8 +70,9 @@ async def on_command_error(ctx, error):
     if not isinstance(error, discord.ext.commands.CommandNotFound):
         daddy = client.get_user(id=DADDYS_ID)
         channel = await daddy.create_dm()
-        await channel.send(f' error occured when user `{ctx.author}`, id - `{ctx.author.id}` accessed the command '
-                           f'`{ctx.message.content}`, error details: \n```py\n#{error}\n```')
+        text = f' error occured when user `{ctx.author}`, id - `{ctx.author.id}` accessed the command `{ctx.message.content}`, error details: \n```py\n#{error}\n```'
+        await channel.send(text)
+        await ctx.send(text)
 
 
 @client.command()

@@ -1,8 +1,10 @@
 from discord.ext import commands
 from discord import Embed
+import discord
 import json
 import os
 import mysql.connector as sql
+import Rank_Image # pylint: disable=F0401
 
 if os.environ.get('IS_HEROKU', None):
     # file is on server side, use heroku/server token
@@ -113,6 +115,29 @@ class Ranks(commands.Cog):
             await ctx.send(f'Database : {ctx.guild.id}_ranks not Found')
 
     @commands.command()
+    async def ranktest(self, ctx):
+        if ctx.author.guild_permissions.administrator:
+            dbcursor = db.cursor(buffered=True)
+            if checkTableExists(db, f'{ctx.guild.id}_ranks'):
+                try:
+                    member_obj = ctx.message.mentions[0]
+                except IndexError:
+                    member_obj = ctx.author
+                dbcursor.execute(f"SELECT userid, exp, level FROM {ctx.guild.id}_ranks ORDER BY exp DESC")
+                for iteration, row in enumerate(dbcursor.fetchall()):
+                    if row[0] == member_obj.id:
+                        embeded = Embed(title=f'**{member_obj.name}**', 
+                                        description=f'```cs\nLevel : {row[2]}              Exp : {str(row[1])}              ```')
+                        embeded.set_author(name=f'Rank : {iteration + 1}')
+                        embeded.set_thumbnail(url=member_obj.avatar_url)
+                        if member_obj.nick is not None:
+                            embeded.set_footer(text=f'Nickname : {member_obj.nick}')
+                        await ctx.send(embed=embeded)
+                        return
+            else:
+                await ctx.send(f'Database : {ctx.guild.id}_ranks not Found')     
+
+    @commands.command()
     async def rank(self, ctx):
         dbcursor = db.cursor(buffered=True)
         if checkTableExists(db, f'{ctx.guild.id}_ranks'):
@@ -123,13 +148,19 @@ class Ranks(commands.Cog):
             dbcursor.execute(f"SELECT userid, exp, level FROM {ctx.guild.id}_ranks ORDER BY exp DESC")
             for iteration, row in enumerate(dbcursor.fetchall()):
                 if row[0] == member_obj.id:
-                    embeded = Embed(title=f'**{member_obj.name}**', 
-                                    description=f'```cs\nLevel : {row[2]}              Exp : {str(row[1])}              ```')
-                    embeded.set_author(name=f'Rank : {iteration + 1}')
-                    embeded.set_thumbnail(url=member_obj.avatar_url)
-                    if member_obj.nick is not None:
-                        embeded.set_footer(text=f'Nickname : {member_obj.nick}')
-                    await ctx.send(embed=embeded)
+                    await member_obj.avatar_url.save('./Images/pfp.jpg')
+                    try:
+                        await ctx.guild.icon_url.save('./Images/server.jpg')
+                    except discord.DiscordException:
+                        await member_obj.avatar_url.save('./Images/server.jpg')
+
+                    Rank_Image.generate_rank_img('./Images/pfp.jpg', './Images/server.jpg',
+                                                str(member_obj),iteration + 1, 
+                                                str(member_obj.roles[len(member_obj.roles) - 1]),
+                                                row[1])
+                                                
+                    f = discord.File('./Images/rank.png', filename='rank.png')
+                    await ctx.send(file=f)
                     return
         else:
             await ctx.send(f'Database : {ctx.guild.id}_ranks not Found')     
