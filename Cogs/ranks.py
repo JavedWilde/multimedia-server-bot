@@ -145,6 +145,7 @@ class Ranks(commands.Cog):
             await ctx.send(f'Database : {ctx.guild.id}_ranks not Found')     
 
 
+    # admin Commands
     @commands.command()
     async def ranktest(self, ctx):
         if ctx.author.guild_permissions.administrator:
@@ -168,6 +169,19 @@ class Ranks(commands.Cog):
             else:
                 await ctx.send(f'Database : {ctx.guild.id}_ranks not Found')     
 
+    @commands.command()
+    async def update_db(self, ctx):
+        dbcursor = db.cursor(buffered=True)
+        if ctx.author.guild_permissions.administrator:
+            for member in ctx.guild.members:
+                if not member.bot:
+                    if checkTableExists(db, f'{ctx.guild.id}_ranks'):
+                        await updateData(member.id, f'{ctx.guild.id}_ranks')
+                    else:
+                        dbcursor.execute(f'CREATE TABLE {ctx.guild.id}_ranks (userid bigint PRIMARY KEY, exp int UNSIGNED,'
+                                    f' level int UNSIGNED)')
+                        await updateData(member.id, f'{ctx.guild.id}_ranks')
+            await ctx.send('Database Updated')
 
 
 def setup(client):
