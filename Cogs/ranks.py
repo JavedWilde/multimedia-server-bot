@@ -1,10 +1,6 @@
 from discord.ext import commands
-<<<<<<< HEAD
 from discord import Embed
 import discord
-=======
-from discord import Embed, Color
->>>>>>> b1d01aee57b78fdf77a2c7835f1aea526ae4063a
 import json
 import os
 import mysql.connector as sql
