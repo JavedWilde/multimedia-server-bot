@@ -133,10 +133,6 @@ class Ranks(commands.Cog):
 
     @commands.command()
     async def rank(self, ctx):
-        if ctx.message.mentions[0].bot:
-            await ctx.send('Bot plebs dont get ranks :slight_smile:')
-            return
-
         try:
             dbcursor = db.cursor(buffered=True)
         except sql.OperationalError:
@@ -148,6 +144,11 @@ class Ranks(commands.Cog):
                 member_obj = ctx.message.mentions[0]
             except IndexError:
                 member_obj = ctx.author
+            
+            if member_obj.bot:
+                await ctx.send('Bot plebs dont get ranks :slight_smile:')
+                return
+
             dbcursor.execute(f"SELECT userid, exp, level FROM {ctx.guild.id}_ranks ORDER BY exp DESC")
             for iteration, row in enumerate(dbcursor.fetchall()):
                 if row[0] == member_obj.id:
