@@ -6,27 +6,27 @@ import os
 import mysql.connector as sql
 import Rank_Image # pylint: disable=F0401
 
-if os.environ.get('IS_HEROKU', None):
-    # file is on server side, use heroku/server token
-    db = sql.connect(
-        host=os.environ.get('SQL_HOST'),
-        port=os.environ.get('SQL_PORT'),
-        user=os.environ.get('SQL_USER'),
-        passwd=os.environ.get('SQL_PASS'),
-        database='javed'
-    )
-else:
-    # file is on development pc/local, use .env file stored on local
-    envJson = json.load(open('.env'))
-    print()
-    db = sql.connect(
-        host=envJson['host'],
-        port=envJson['port'],
-        user=envJson['user'],
-        passwd=envJson['passwd'],
-        database='javed'
-    )
-
+def reconnect():
+    global db
+    if os.environ.get('IS_HEROKU', None):
+        # file is on server side, use heroku/server token 
+        db = sql.connect(
+            host=os.environ.get('SQL_HOST'),
+            port=os.environ.get('SQL_PORT'),
+            user=os.environ.get('SQL_USER'),
+            passwd=os.environ.get('SQL_PASS'),
+            database='javed'
+        )
+    else:
+        # file is on development pc/local, use .env file stored on local
+        envJson = json.load(open('.env'))
+        db = sql.connect(
+            host=envJson['host'],
+            port=envJson['port'],
+            user=envJson['user'],
+            passwd=envJson['passwd'],
+            database='javed')
+            
 
 def checkTableExists(dbcon, tablename):
     dbcur = dbcon.cursor(buffered=True)
@@ -65,7 +65,7 @@ async def updateData(userid, tablename, message=None):
         cur.execute(f"UPDATE {tablename} SET exp = {tempXP}, level = {tempLVL} WHERE userid = {userid}")
     db.commit()
 
-
+reconnect()
 class Ranks(commands.Cog):
 
     def __init__(self, client):
@@ -73,7 +73,15 @@ class Ranks(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        dbcursor = db.cursor(buffered=True)
+        if member.bot:
+            return
+        
+        try:
+            dbcursor = db.cursor(buffered=True)
+        except sql.OperationalError:
+            reconnect()
+            dbcursor = db.cursor(buffered=True)
+        
         if checkTableExists(db, f'{member.guild.id}_ranks'):
             await updateData(member.id, f'{member.guild.id}_ranks')
         else:
@@ -83,7 +91,12 @@ class Ranks(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        dbcursor = db.cursor(buffered=True)
+        try:
+            dbcursor = db.cursor(buffered=True)
+        except sql.OperationalError:
+            reconnect()
+            dbcursor = db.cursor(buffered=True)
+        
         if message.author.bot:
             return
 
@@ -96,7 +109,12 @@ class Ranks(commands.Cog):
 
     @commands.command(aliases=['lb'])
     async def leaderboard(self, ctx):
-        dbcursor = db.cursor(buffered=True)
+        try:
+            dbcursor = db.cursor(buffered=True)
+        except sql.OperationalError:
+            reconnect()
+            dbcursor = db.cursor(buffered=True)
+        
         if checkTableExists(db, f'{ctx.guild.id}_ranks'):
             dbcursor.execute(f"SELECT userid, exp, level FROM {ctx.guild.id}_ranks ORDER BY exp DESC LIMIT 10")
             embeded = Embed(title='**LeaderBoard**', color=Color.red())
@@ -107,7 +125,6 @@ class Ranks(commands.Cog):
                 embeded.add_field(name=f'{iteration+1}. {str(member_name)[:-5]}',
                                     value=f'```cs\nLevel : {row[2]}              Exp : {str(row[1])}              ```',
                                     inline=False)
-                print(row, iteration)
 
             await ctx.send(embed=embeded)
             
@@ -116,7 +133,16 @@ class Ranks(commands.Cog):
 
     @commands.command()
     async def rank(self, ctx):
-        dbcursor = db.cursor(buffered=True)
+        if ctx.message.mentions[0].bot:
+            await ctx.send('Bot plebs dont get ranks :slight_smile:')
+            return
+
+        try:
+            dbcursor = db.cursor(buffered=True)
+        except sql.OperationalError:
+            reconnect()
+            dbcursor = db.cursor(buffered=True)
+        
         if checkTableExists(db, f'{ctx.guild.id}_ranks'):
             try:
                 member_obj = ctx.message.mentions[0]
@@ -149,7 +175,12 @@ class Ranks(commands.Cog):
     @commands.command()
     async def ranktest(self, ctx):
         if ctx.author.guild_permissions.administrator:
-            dbcursor = db.cursor(buffered=True)
+            try:
+                dbcursor = db.cursor(buffered=True)
+            except sql.OperationalError:
+                reconnect()
+                dbcursor = db.cursor(buffered=True)
+        
             if checkTableExists(db, f'{ctx.guild.id}_ranks'):
                 try:
                     member_obj = ctx.message.mentions[0]
@@ -171,8 +202,13 @@ class Ranks(commands.Cog):
 
     @commands.command()
     async def update_db(self, ctx):
-        dbcursor = db.cursor(buffered=True)
         if ctx.author.guild_permissions.administrator:
+            try:
+                dbcursor = db.cursor(buffered=True)
+            except sql.OperationalError:
+                reconnect()
+                dbcursor = db.cursor(buffered=True)
+                
             for member in ctx.guild.members:
                 if not member.bot:
                     if checkTableExists(db, f'{ctx.guild.id}_ranks'):

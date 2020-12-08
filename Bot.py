@@ -60,6 +60,7 @@ auto_load = True
 @client.event
 async def on_ready():
     print('Bot On')
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name='Jews Burn Alive'))
     for filename in os.listdir('./Cogs'):
         if filename.endswith('.py') and auto_load is True:
             client.load_extension(f'Cogs.{filename[:-3]}')
@@ -280,6 +281,13 @@ async def on_member_join(member):
         ' Server! enjoy your stay in the server make sure to read the ' + client.get_channel(
             id=RULES_CHANNEL_ID).mention + ' and assign '
         + client.get_channel(id=ROLES_CHANNEL_ID).mention + ' to yourself')
+
+@client.event
+async def on_message(message):
+    await client.process_commands(message)
+    if client.user in message.mentions:
+        ctx = await client.get_context(message)
+        await help(ctx)
 
 
 client.run(token)
