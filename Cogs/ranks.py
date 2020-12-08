@@ -152,7 +152,7 @@ class Ranks(commands.Cog):
             dbcursor.execute(f"SELECT userid, exp, level FROM {ctx.guild.id}_ranks ORDER BY exp DESC")
             for iteration, row in enumerate(dbcursor.fetchall()):
                 if row[0] == member_obj.id:
-                    await ctx.send('Generating Card, Please Wait...')
+                    wait_msg = await ctx.send('Generating Card, Please Wait...')
                     await member_obj.avatar_url.save('./Images/pfp.jpg')
                     try:
                         await ctx.guild.icon_url.save('./Images/server.jpg')
@@ -165,7 +165,7 @@ class Ranks(commands.Cog):
                                                 row[1])
                                                 
                     f = discord.File('./Images/rank.png', filename='rank.png')
-                    await ctx.channel.purge(limit=1)
+                    await wait_msg.delete()
                     await ctx.send(file=f)
                     return
         else:
