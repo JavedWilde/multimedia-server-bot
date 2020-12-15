@@ -41,7 +41,7 @@ slur = ['madherchod', 'randwa', 'randi', 'betichod', 'vinoth ki jhaant', 'raand 
 
 # roles that must be excluded from being Given by the bot
 excludedRoles = ['@everyone', 'bots', 'Groovy', 'Rythm', 'Admins', 'SulagtiGaand', 'Moderator', 'NotSoBot',
-                 'Professional', 'Dank Memer', 'TestBot']
+                 'Professional Artist', 'Dank Memer', 'TestBot', 'BotDev']
 
 # names excluded from provoke
 provoke_exclusions = ['saksham', 'javed', 'sonu', 'sexa']
